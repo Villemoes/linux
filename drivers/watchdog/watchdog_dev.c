@@ -88,7 +88,7 @@ static struct kthread_worker *watchdog_kworker;
 static bool handle_boot_enabled =
 	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
 
-static unsigned open_timeout;
+static unsigned open_timeout = CONFIG_WATCHDOG_OPEN_TIMEOUT;
 
 static bool watchdog_past_open_deadline(struct watchdog_core_data *data)
 {
@@ -1218,4 +1218,5 @@ MODULE_PARM_DESC(handle_boot_enabled,
 
 module_param(open_timeout, uint, 0644);
 MODULE_PARM_DESC(open_timeout,
-	"Maximum time (in seconds, 0 means infinity) for userspace to open or re-open a watchdog device (default=0)");
+	"Maximum time (in seconds, 0 means infinity) for userspace to open or re-open a watchdog device (default="
+	__MODULE_STRING(CONFIG_WATCHDOG_OPEN_TIMEOUT) ")");
