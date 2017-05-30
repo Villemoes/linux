@@ -69,6 +69,7 @@ struct watchdog_core_data {
 	struct mutex lock;
 	ktime_t last_keepalive;
 	ktime_t last_hw_keepalive;
+	ktime_t open_deadline;
 	struct hrtimer timer;
 	struct kthread_work work;
 	unsigned long status;		/* Internal status bits */
@@ -86,6 +87,20 @@ static struct kthread_worker *watchdog_kworker;
 
 static bool handle_boot_enabled =
 	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
+
+static unsigned open_timeout;
+
+static bool watchdog_past_open_deadline(struct watchdog_core_data *data)
+{
+	return ktime_after(ktime_get(), data->open_deadline);
+}
+
+static void watchdog_set_open_deadline(struct watchdog_core_data *data,
+				       unsigned timeout)
+{
+	data->open_deadline = timeout ?
+		ktime_get() + ktime_set(timeout, 0) : KTIME_MAX;
+}
 
 static inline bool watchdog_need_worker(struct watchdog_device *wdd)
 {
@@ -211,7 +226,13 @@ static bool watchdog_worker_should_ping(struct watchdog_core_data *wd_data)
 {
 	struct watchdog_device *wdd = wd_data->wdd;
 
-	return wdd && (watchdog_active(wdd) || watchdog_hw_running(wdd));
+	if (!wdd)
+		return false;
+
+	if (watchdog_active(wdd))
+		return true;
+
+	return watchdog_hw_running(wdd) && !watchdog_past_open_deadline(wd_data);
 }
 
 static void watchdog_ping_work(struct kthread_work *work)
@@ -275,6 +296,8 @@ static int watchdog_start(struct watchdog_device *wdd)
 /*
  *	watchdog_stop: wrapper to stop the watchdog.
  *	@wdd: the watchdog device to stop
+ *	@timeout: timeout for userspace to start handling this device
+ *	again (0 = infinity)
  *
  *	The caller must hold wd_data->lock.
  *
@@ -284,7 +307,7 @@ static int watchdog_start(struct watchdog_device *wdd)
  *	If the 'nowayout' feature was set, the watchdog cannot be stopped.
  */
 
-static int watchdog_stop(struct watchdog_device *wdd)
+static int watchdog_stop(struct watchdog_device *wdd, unsigned timeout)
 {
 	int err = 0;
 
@@ -297,7 +320,8 @@ static int watchdog_stop(struct watchdog_device *wdd)
 		return -EBUSY;
 	}
 
-	if (wdd->ops->stop) {
+	watchdog_set_open_deadline(wdd->wd_data, timeout);
+	if (wdd->ops->stop && !timeout) {
 		clear_bit(WDOG_HW_RUNNING, &wdd->status);
 		err = wdd->ops->stop(wdd);
 	} else {
@@ -712,7 +736,7 @@ static long watchdog_ioctl(struct file *file, unsigned int cmd,
 			break;
 		}
 		if (val & WDIOS_DISABLECARD) {
-			err = watchdog_stop(wdd);
+			err = watchdog_stop(wdd, 0);
 			if (err < 0)
 				break;
 		}
@@ -875,7 +899,7 @@ static int watchdog_release(struct inode *inode, struct file *file)
 		err = 0;
 	else if (test_and_clear_bit(_WDOG_ALLOW_RELEASE, &wd_data->status) ||
 		 !(wdd->info->options & WDIOF_MAGICCLOSE))
-		err = watchdog_stop(wdd);
+		err = watchdog_stop(wdd, open_timeout);
 
 	/* If the watchdog was not stopped, send a keepalive ping */
 	if (err < 0) {
@@ -983,6 +1007,7 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
 
 	/* Record time of most recent heartbeat as 'just before now'. */
 	wd_data->last_hw_keepalive = ktime_sub(ktime_get(), 1);
+	watchdog_set_open_deadline(wd_data, open_timeout);
 
 	/*
 	 * If the watchdog is running, prevent its driver from being unloaded,
@@ -996,6 +1021,15 @@ static int watchdog_cdev_register(struct watchdog_device *wdd, dev_t devno)
 		else
 			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
 				wdd->id);
+	} else if (open_timeout) {
+		/*
+		 * Start the watchdog, and let the kernel handle it
+		 * for up to open_timeout seconds.
+		 */
+		watchdog_start(wdd);
+		clear_bit(WDOG_ACTIVE, &wdd->status);
+		set_bit(WDOG_HW_RUNNING, &wdd->status);
+		watchdog_update_worker(wdd);
 	}
 
 	return 0;
@@ -1021,7 +1055,7 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
 
 	if (watchdog_active(wdd) &&
 	    test_bit(WDOG_STOP_ON_UNREGISTER, &wdd->status)) {
-		watchdog_stop(wdd);
+		watchdog_stop(wdd, 0);
 	}
 
 	mutex_lock(&wd_data->lock);
@@ -1181,3 +1215,7 @@ module_param(handle_boot_enabled, bool, 0444);
 MODULE_PARM_DESC(handle_boot_enabled,
 	"Watchdog core auto-updates boot enabled watchdogs before userspace takes over (default="
 	__MODULE_STRING(IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) ")");
+
+module_param(open_timeout, uint, 0644);
+MODULE_PARM_DESC(open_timeout,
+	"Maximum time (in seconds, 0 means infinity) for userspace to open or re-open a watchdog device (default=0)");
