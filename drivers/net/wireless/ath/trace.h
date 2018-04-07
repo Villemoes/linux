@@ -49,7 +49,7 @@ TRACE_EVENT(ath_log,
 		    WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 					   ATH_DBG_MAX_LEN,
 					   vaf->fmt,
-					   *vaf->va) >= ATH_DBG_MAX_LEN);
+					   vaf->va) >= ATH_DBG_MAX_LEN);
 	    ),
 
 	    TP_printk(

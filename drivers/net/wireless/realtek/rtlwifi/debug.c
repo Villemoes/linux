@@ -35,16 +35,13 @@ void _rtl_dbg_trace(struct rtl_priv *rtlpriv, u64 comp, int level,
 	if (unlikely((comp & rtlpriv->cfg->mod_params->debug_mask) &&
 		     level <= rtlpriv->cfg->mod_params->debug_level)) {
 		struct va_format vaf;
-		va_list args;
-
-		va_start(args, fmt);
 
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 
 		pr_info(":<%lx> %pV", in_interrupt(), &vaf);
 
-		va_end(args);
+		va_end(vaf.va);
 	}
 }
 EXPORT_SYMBOL_GPL(_rtl_dbg_trace);
@@ -55,16 +52,13 @@ void _rtl_dbg_print(struct rtl_priv *rtlpriv, u64 comp, int level,
 	if (unlikely((comp & rtlpriv->cfg->mod_params->debug_mask) &&
 		     level <= rtlpriv->cfg->mod_params->debug_level)) {
 		struct va_format vaf;
-		va_list args;
-
-		va_start(args, fmt);
 
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 
 		pr_info("%pV", &vaf);
 
-		va_end(args);
+		va_end(vaf.va);
 	}
 }
 EXPORT_SYMBOL_GPL(_rtl_dbg_print);

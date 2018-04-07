@@ -120,17 +120,15 @@ void umip_printk(const struct pt_regs *regs, const char *log_level,
 	static DEFINE_RATELIMIT_STATE(ratelimit, 2 * 60 * HZ, 5);
 	struct task_struct *tsk = current;
 	struct va_format vaf;
-	va_list args;
 
 	if (!__ratelimit(&ratelimit))
 		return;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk("%s" pr_fmt("%s[%d] ip:%lx sp:%lx: %pV"), log_level, tsk->comm,
 	       task_pid_nr(tsk), regs->ip, regs->sp, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /**

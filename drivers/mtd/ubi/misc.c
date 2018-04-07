@@ -158,47 +158,38 @@ int ubi_check_pattern(const void *buf, uint8_t patt, int size)
 void ubi_msg(const struct ubi_device *ubi, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_notice(UBI_NAME_STR "%d: %pV\n", ubi->ubi_num, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /* UBI warning messages */
 void ubi_warn(const struct ubi_device *ubi, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_warn(UBI_NAME_STR "%d warning: %ps: %pV\n",
 		ubi->ubi_num, __builtin_return_address(0), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /* UBI error messages */
 void ubi_err(const struct ubi_device *ubi, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_err(UBI_NAME_STR "%d error: %ps: %pV\n",
 	       ubi->ubi_num, __builtin_return_address(0), &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }

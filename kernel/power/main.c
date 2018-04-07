@@ -427,22 +427,19 @@ power_attr(pm_debug_messages);
 void __pm_pr_dbg(bool defer, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!pm_debug_messages_on)
 		return;
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (defer)
 		printk_deferred(KERN_DEBUG "PM: %pV", &vaf);
 	else
 		printk(KERN_DEBUG "PM: %pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 #else /* !CONFIG_PM_SLEEP_DEBUG */

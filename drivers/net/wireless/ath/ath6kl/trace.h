@@ -259,7 +259,7 @@ DECLARE_EVENT_CLASS(ath6kl_log_event,
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       ATH6KL_MSG_MAX,
 				       vaf->fmt,
-				       *vaf->va) >= ATH6KL_MSG_MAX);
+				       vaf->va) >= ATH6KL_MSG_MAX);
 	),
 	TP_printk("%s", __get_str(msg))
 );
@@ -291,7 +291,7 @@ TRACE_EVENT(ath6kl_log_dbg,
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       ATH6KL_MSG_MAX,
 				       vaf->fmt,
-				       *vaf->va) >= ATH6KL_MSG_MAX);
+				       vaf->va) >= ATH6KL_MSG_MAX);
 	),
 	TP_printk("%s", __get_str(msg))
 );

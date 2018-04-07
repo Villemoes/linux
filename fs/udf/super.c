@@ -2293,32 +2293,26 @@ void _udf_err(struct super_block *sb, const char *function,
 	      const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_err("error (device %s): %s: %pV", sb->s_id, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void _udf_warn(struct super_block *sb, const char *function,
 	       const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_warn("warning (device %s): %s: %pV", sb->s_id, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 static void udf_put_super(struct super_block *sb)

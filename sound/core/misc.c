@@ -65,7 +65,6 @@ static const char *sanity_file_name(const char *path)
 void __snd_printk(unsigned int level, const char *path, int line,
 		  const char *format, ...)
 {
-	va_list args;
 #ifdef CONFIG_SND_VERBOSE_PRINTK
 	int kern_level;
 	struct va_format vaf;
@@ -78,10 +77,9 @@ void __snd_printk(unsigned int level, const char *path, int line,
 		return;
 #endif
 
-	va_start(args, format);
 #ifdef CONFIG_SND_VERBOSE_PRINTK
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	while ((kern_level = printk_get_level(vaf.fmt)) != 0) {
 		const char *end_of_header = printk_skip_level(vaf.fmt);
@@ -102,7 +100,7 @@ void __snd_printk(unsigned int level, const char *path, int line,
 #else
 	vprintk(format, args);
 #endif
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(__snd_printk);
 #endif

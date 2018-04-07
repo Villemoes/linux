@@ -40,16 +40,13 @@ struct ath6kl_fwlog_slot {
 void ath6kl_printk(const char *level, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk("%sath6kl: %pV", level, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath6kl_printk);
 
@@ -58,13 +55,10 @@ void ath6kl_info(const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	ath6kl_printk(KERN_INFO, "%pV", &vaf);
 	trace_ath6kl_log_info(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath6kl_info);
 
@@ -73,13 +67,10 @@ void ath6kl_err(const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	ath6kl_printk(KERN_ERR, "%pV", &vaf);
 	trace_ath6kl_log_err(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath6kl_err);
 
@@ -88,13 +79,10 @@ void ath6kl_warn(const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	ath6kl_printk(KERN_WARNING, "%pV", &vaf);
 	trace_ath6kl_log_warn(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath6kl_warn);
 
@@ -130,19 +118,16 @@ EXPORT_SYMBOL(ath6kl_read_tgt_stats);
 void ath6kl_dbg(enum ATH6K_DEBUG_MASK mask, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (debug_mask & mask)
 		ath6kl_printk(KERN_DEBUG, "%pV", &vaf);
 
 	trace_ath6kl_log_dbg(mask, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath6kl_dbg);
 

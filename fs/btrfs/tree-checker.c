@@ -58,18 +58,15 @@ static void generic_err(const struct btrfs_fs_info *fs_info,
 			const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	btrfs_crit(fs_info,
 		"corrupt %s: root=%llu block=%llu slot=%d, %pV",
 		btrfs_header_level(eb) == 0 ? "leaf" : "node",
 		btrfs_header_owner(eb), btrfs_header_bytenr(eb), slot, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /*
@@ -84,20 +81,18 @@ static void file_extent_err(const struct btrfs_fs_info *fs_info,
 {
 	struct btrfs_key key;
 	struct va_format vaf;
-	va_list args;
 
 	btrfs_item_key_to_cpu(eb, &key, slot);
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	btrfs_crit(fs_info,
 	"corrupt %s: root=%llu block=%llu slot=%d ino=%llu file_offset=%llu, %pV",
 		btrfs_header_level(eb) == 0 ? "leaf" : "node",
 		btrfs_header_owner(eb), btrfs_header_bytenr(eb), slot,
 		key.objectid, key.offset, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /*
@@ -238,20 +233,18 @@ static void dir_item_err(const struct btrfs_fs_info *fs_info,
 {
 	struct btrfs_key key;
 	struct va_format vaf;
-	va_list args;
 
 	btrfs_item_key_to_cpu(eb, &key, slot);
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	btrfs_crit(fs_info,
 	"corrupt %s: root=%llu block=%llu slot=%d ino=%llu, %pV",
 		btrfs_header_level(eb) == 0 ? "leaf" : "node",
 		btrfs_header_owner(eb), btrfs_header_bytenr(eb), slot,
 		key.objectid, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 static int check_dir_item(struct btrfs_fs_info *fs_info,

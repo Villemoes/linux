@@ -107,15 +107,13 @@ void __jbd2_debug(int level, const char *file, const char *func,
 		  unsigned int line, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (level > jbd2_journal_enable_debug)
 		return;
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk(KERN_DEBUG "%s: (%s, %u): %pV\n", file, func, line, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(__jbd2_debug);
 #endif

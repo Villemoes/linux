@@ -67,7 +67,7 @@ DECLARE_EVENT_CLASS(ath10k_log_event,
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       ATH10K_MSG_MAX,
 				       vaf->fmt,
-				       *vaf->va) >= ATH10K_MSG_MAX);
+				       vaf->va) >= ATH10K_MSG_MAX);
 	),
 	TP_printk(
 		"%s %s %s",
@@ -108,7 +108,7 @@ TRACE_EVENT(ath10k_log_dbg,
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       ATH10K_MSG_MAX,
 				       vaf->fmt,
-				       *vaf->va) >= ATH10K_MSG_MAX);
+				       vaf->va) >= ATH10K_MSG_MAX);
 	),
 	TP_printk(
 		"%s %s %s",

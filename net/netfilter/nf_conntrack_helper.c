@@ -371,12 +371,9 @@ void nf_ct_helper_log(struct sk_buff *skb, const struct nf_conn *ct,
 	const struct nf_conn_help *help;
 	const struct nf_conntrack_helper *helper;
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	/* Called from the helper function, this call never fails */
 	help = nfct_help(ct);
@@ -387,7 +384,7 @@ void nf_ct_helper_log(struct sk_buff *skb, const struct nf_conn *ct,
 	nf_log_packet(nf_ct_net(ct), nf_ct_l3num(ct), 0, skb, NULL, NULL, NULL,
 		      "nf_ct_%s: dropping packet: %pV ", helper->name, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(nf_ct_helper_log);
 

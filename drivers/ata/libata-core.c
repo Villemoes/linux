@@ -7205,16 +7205,13 @@ void ata_port_printk(const struct ata_port *ap, const char *level,
 		     const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk("%sata%u: %pV", level, ap->print_id, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ata_port_printk);
 
@@ -7222,12 +7219,9 @@ void ata_link_printk(const struct ata_link *link, const char *level,
 		     const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (sata_pmp_attached(link->ap) || link->ap->slave_link)
 		printk("%sata%u.%02u: %pV",
@@ -7236,7 +7230,7 @@ void ata_link_printk(const struct ata_link *link, const char *level,
 		printk("%sata%u: %pV",
 		       level, link->ap->print_id, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ata_link_printk);
 
@@ -7244,18 +7238,15 @@ void ata_dev_printk(const struct ata_device *dev, const char *level,
 		    const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk("%sata%u.%02u: %pV",
 	       level, dev->link->ap->print_id, dev->link->pmp + dev->devno,
 	       &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ata_dev_printk);
 

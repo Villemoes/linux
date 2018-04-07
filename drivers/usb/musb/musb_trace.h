@@ -32,7 +32,7 @@ TRACE_EVENT(musb_log,
 	),
 	TP_fast_assign(
 		__assign_str(name, dev_name(musb->controller));
-		vsnprintf(__get_str(msg), MUSB_MSG_MAX, vaf->fmt, *vaf->va);
+		vsnprintf(__get_str(msg), MUSB_MSG_MAX, vaf->fmt, vaf->va);
 	),
 	TP_printk("%s: %s", __get_str(name), __get_str(msg))
 );

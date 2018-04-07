@@ -2539,16 +2539,13 @@ ql_mask_match(uint32_t level)
 void
 ql_dbg(uint32_t level, scsi_qla_host_t *vha, int32_t id, const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 
 	if (!ql_mask_match(level))
 		return;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	if (vha != NULL) {
 		const struct pci_dev *pdev = vha->hw->pdev;
@@ -2561,7 +2558,7 @@ ql_dbg(uint32_t level, scsi_qla_host_t *vha, int32_t id, const char *fmt, ...)
 			QL_MSGHDR, "0000:00:00.0", id + ql_dbg_offset, &vaf);
 	}
 
-	va_end(va);
+	va_end(vaf.va);
 
 }
 
@@ -2583,7 +2580,6 @@ void
 ql_dbg_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 	   const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 
 	if (pdev == NULL)
@@ -2591,16 +2587,14 @@ ql_dbg_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 	if (!ql_mask_match(level))
 		return;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	/* <module-name> <dev-name>:<msg-id> Message */
 	pr_warn("%s [%s]-%04x: : %pV",
 		QL_MSGHDR, dev_name(&(pdev->dev)), id + ql_dbg_offset, &vaf);
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 /*
@@ -2619,7 +2613,6 @@ ql_dbg_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 void
 ql_log(uint32_t level, scsi_qla_host_t *vha, int32_t id, const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char pbuf[128];
 
@@ -2637,10 +2630,8 @@ ql_log(uint32_t level, scsi_qla_host_t *vha, int32_t id, const char *fmt, ...)
 	}
 	pbuf[sizeof(pbuf) - 1] = 0;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	switch (level) {
 	case ql_log_fatal: /* FATAL LOG */
@@ -2657,7 +2648,7 @@ ql_log(uint32_t level, scsi_qla_host_t *vha, int32_t id, const char *fmt, ...)
 		break;
 	}
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 /*
@@ -2678,7 +2669,6 @@ void
 ql_log_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 	   const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char pbuf[128];
 
@@ -2692,10 +2682,8 @@ ql_log_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 		 QL_MSGHDR, dev_name(&(pdev->dev)), id);
 	pbuf[sizeof(pbuf) - 1] = 0;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	switch (level) {
 	case ql_log_fatal: /* FATAL LOG */
@@ -2712,7 +2700,7 @@ ql_log_pci(uint32_t level, struct pci_dev *pdev, int32_t id,
 		break;
 	}
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 void
@@ -2779,7 +2767,6 @@ void
 ql_log_qp(uint32_t level, struct qla_qpair *qpair, int32_t id,
     const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char pbuf[128];
 
@@ -2797,10 +2784,8 @@ ql_log_qp(uint32_t level, struct qla_qpair *qpair, int32_t id,
 	}
 	pbuf[sizeof(pbuf) - 1] = 0;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	switch (level) {
 	case ql_log_fatal: /* FATAL LOG */
@@ -2817,7 +2802,7 @@ ql_log_qp(uint32_t level, struct qla_qpair *qpair, int32_t id,
 		break;
 	}
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 /*
@@ -2837,16 +2822,13 @@ void
 ql_dbg_qp(uint32_t level, struct qla_qpair *qpair, int32_t id,
     const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 
 	if (!ql_mask_match(level))
 		return;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	if (qpair != NULL) {
 		const struct pci_dev *pdev = qpair->pdev;
@@ -2859,6 +2841,6 @@ ql_dbg_qp(uint32_t level, struct qla_qpair *qpair, int32_t id,
 			QL_MSGHDR, "0000:00:00.0", id + ql_dbg_offset, &vaf);
 	}
 
-	va_end(va);
+	va_end(vaf.va);
 
 }

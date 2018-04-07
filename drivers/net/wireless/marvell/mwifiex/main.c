@@ -1750,22 +1750,19 @@ void _mwifiex_dbg(const struct mwifiex_adapter *adapter, int mask,
 		  const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!(adapter->debug_mask & mask))
 		return;
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (adapter->dev)
 		dev_info(adapter->dev, "%pV", &vaf);
 	else
 		pr_info("%pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(_mwifiex_dbg);
 

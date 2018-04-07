@@ -3190,12 +3190,9 @@ void _ath5k_printk(const struct ath5k_hw *ah, const char *level,
 		   const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (ah && ah->hw)
 		printk("%s" pr_fmt("%s: %pV"),
@@ -3203,5 +3200,5 @@ void _ath5k_printk(const struct ath5k_hw *ah, const char *level,
 	else
 		printk("%s" pr_fmt("%pV"), level, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }

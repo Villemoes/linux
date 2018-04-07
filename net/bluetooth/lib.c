@@ -138,63 +138,51 @@ EXPORT_SYMBOL(bt_to_errno);
 void bt_info(const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	pr_info("%pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(bt_info);
 
 void bt_warn(const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	pr_warn("%pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(bt_warn);
 
 void bt_err(const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	pr_err("%pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(bt_err);
 
 void bt_err_ratelimited(const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	pr_err_ratelimited("%pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(bt_err_ratelimited);

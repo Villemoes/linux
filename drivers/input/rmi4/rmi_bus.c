@@ -25,17 +25,14 @@ MODULE_PARM_DESC(debug_flags, "control debugging information");
 void rmi_dbg(int flags, struct device *dev, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (flags & debug_flags) {
-		va_start(args, fmt);
-
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 
 		dev_printk(KERN_DEBUG, dev, "%pV", &vaf);
 
-		va_end(args);
+		va_end(vaf.va);
 	}
 }
 EXPORT_SYMBOL_GPL(rmi_dbg);

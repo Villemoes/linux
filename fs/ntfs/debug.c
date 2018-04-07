@@ -44,7 +44,6 @@ void __ntfs_warning(const char *function, const struct super_block *sb,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	int flen = 0;
 
 #ifndef DEBUG
@@ -53,15 +52,14 @@ void __ntfs_warning(const char *function, const struct super_block *sb,
 #endif
 	if (function)
 		flen = strlen(function);
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	if (sb)
 		pr_warn("(device %s): %s(): %pV\n",
 			sb->s_id, flen ? function : "", &vaf);
 	else
 		pr_warn("%s(): %pV\n", flen ? function : "", &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /**
@@ -87,7 +85,6 @@ void __ntfs_error(const char *function, const struct super_block *sb,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	int flen = 0;
 
 #ifndef DEBUG
@@ -96,15 +93,14 @@ void __ntfs_error(const char *function, const struct super_block *sb,
 #endif
 	if (function)
 		flen = strlen(function);
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	if (sb)
 		pr_err("(device %s): %s(): %pV\n",
 		       sb->s_id, flen ? function : "", &vaf);
 	else
 		pr_err("%s(): %pV\n", flen ? function : "", &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 #ifdef DEBUG
@@ -116,18 +112,16 @@ void __ntfs_debug(const char *file, int line, const char *function,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	int flen = 0;
 
 	if (!debug_msgs)
 		return;
 	if (function)
 		flen = strlen(function);
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	pr_debug("(%s, %d): %s(): %pV", file, line, flen ? function : "", &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /* Dump a runlist. Caller has to provide synchronisation for @rl. */

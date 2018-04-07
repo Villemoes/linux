@@ -17,14 +17,11 @@ void __sdata_info(const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_info("%pV", &vaf);
 	trace_mac80211_info(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void __sdata_dbg(bool print, const char *fmt, ...)
@@ -32,15 +29,12 @@ void __sdata_dbg(bool print, const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (print)
 		pr_debug("%pV", &vaf);
 	trace_mac80211_dbg(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void __sdata_err(const char *fmt, ...)
@@ -48,14 +42,11 @@ void __sdata_err(const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_err("%pV", &vaf);
 	trace_mac80211_err(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void __wiphy_dbg(struct wiphy *wiphy, bool print, const char *fmt, ...)
@@ -63,15 +54,12 @@ void __wiphy_dbg(struct wiphy *wiphy, bool print, const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (print)
 		wiphy_dbg(wiphy, "%pV", &vaf);
 	trace_mac80211_dbg(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 #endif
 #endif

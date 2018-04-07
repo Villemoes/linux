@@ -41,14 +41,11 @@
 void func(const struct fw_card *card, const char *fmt, ...)	\
 {								\
 	struct va_format vaf;					\
-	va_list args;						\
-								\
-	va_start(args, fmt);					\
 	vaf.fmt = fmt;						\
-	vaf.va = &args;						\
+	va_start(vaf.va, fmt);						\
 	printk(kern_level KBUILD_MODNAME " %s: %pV",		\
 	       dev_name(card->device), &vaf);			\
-	va_end(args);						\
+	va_end(vaf.va);						\
 }
 define_fw_printk_level(fw_err, KERN_ERR);
 define_fw_printk_level(fw_notice, KERN_NOTICE);

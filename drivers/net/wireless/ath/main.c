@@ -72,12 +72,9 @@ void ath_printk(const char *level, const struct ath_common* common,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (common && common->hw && common->hw->wiphy) {
 		printk("%sath: %s: %pV",
@@ -87,7 +84,7 @@ void ath_printk(const char *level, const struct ath_common* common,
 		printk("%sath: %pV", level, &vaf);
 	}
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath_printk);
 

@@ -2582,18 +2582,15 @@ int __ocfs2_error(struct super_block *sb, const char *function,
 		  const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	/* Not using mlog here because we want to show the actual
 	 * function the error came from. */
 	printk(KERN_CRIT "OCFS2: ERROR (device %s): %s: %pV",
 	       sb->s_id, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	return ocfs2_handle_error(sb);
 }
@@ -2605,17 +2602,14 @@ void __ocfs2_abort(struct super_block *sb, const char *function,
 		   const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk(KERN_CRIT "OCFS2: abort (device %s): %s: %pV",
 	       sb->s_id, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	/* We don't have the cluster support yet to go straight to
 	 * hard readonly in here. Until then, we want to keep

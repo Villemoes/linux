@@ -39,21 +39,18 @@ int gfs2_lm_withdraw(struct gfs2_sbd *sdp, const char *fmt, ...)
 {
 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
 	const struct lm_lockops *lm = ls->ls_ops;
-	va_list args;
 	struct va_format vaf;
 
 	if (sdp->sd_args.ar_errors == GFS2_ERRORS_WITHDRAW &&
 	    test_and_set_bit(SDF_SHUTDOWN, &sdp->sd_flags))
 		return 0;
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	fs_err(sdp, "%pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	if (sdp->sd_args.ar_errors == GFS2_ERRORS_WITHDRAW) {
 		fs_err(sdp, "about to withdraw this file system\n");

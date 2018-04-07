@@ -32,7 +32,7 @@ DECLARE_EVENT_CLASS(xhci_log_msg,
 	TP_ARGS(vaf),
 	TP_STRUCT__entry(__dynamic_array(char, msg, XHCI_MSG_MAX)),
 	TP_fast_assign(
-		vsnprintf(__get_str(msg), XHCI_MSG_MAX, vaf->fmt, *vaf->va);
+		vsnprintf(__get_str(msg), XHCI_MSG_MAX, vaf->fmt, vaf->va);
 	),
 	TP_printk("%s", __get_str(msg))
 );

@@ -100,20 +100,17 @@ l2m_debug(struct FsmInst *fi, char *fmt, ...)
 {
 	struct layer2 *l2 = fi->userdata;
 	struct va_format vaf;
-	va_list va;
 
 	if (!(*debug & DEBUG_L2_FSM))
 		return;
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	printk(KERN_DEBUG "%s l2 (sapi %d tei %d): %pV\n",
 	       mISDNDevName4ch(&l2->ch), l2->sapi, l2->tei, &vaf);
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 inline u_int

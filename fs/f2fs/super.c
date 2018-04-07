@@ -188,13 +188,10 @@ static match_table_t f2fs_tokens = {
 void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk_ratelimited("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 static inline void limit_reserve_root(struct f2fs_sb_info *sbi)

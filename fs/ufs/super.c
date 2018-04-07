@@ -274,7 +274,6 @@ void ufs_error (struct super_block * sb, const char * function,
 	struct ufs_sb_private_info * uspi;
 	struct ufs_super_block_first * usb1;
 	struct va_format vaf;
-	va_list args;
 
 	uspi = UFS_SB(sb)->s_uspi;
 	usb1 = ubh_get_usb_first(uspi);
@@ -285,9 +284,8 @@ void ufs_error (struct super_block * sb, const char * function,
 		ufs_mark_sb_dirty(sb);
 		sb->s_flags |= SB_RDONLY;
 	}
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	switch (UFS_SB(sb)->s_mount_opt & UFS_MOUNT_ONERROR) {
 	case UFS_MOUNT_ONERROR_PANIC:
 		panic("panic (device %s): %s: %pV\n",
@@ -299,7 +297,7 @@ void ufs_error (struct super_block * sb, const char * function,
 		pr_crit("error (device %s): %s: %pV\n",
 			sb->s_id, function, &vaf);
 	}
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void ufs_panic (struct super_block * sb, const char * function,
@@ -308,7 +306,6 @@ void ufs_panic (struct super_block * sb, const char * function,
 	struct ufs_sb_private_info * uspi;
 	struct ufs_super_block_first * usb1;
 	struct va_format vaf;
-	va_list args;
 	
 	uspi = UFS_SB(sb)->s_uspi;
 	usb1 = ubh_get_usb_first(uspi);
@@ -318,27 +315,23 @@ void ufs_panic (struct super_block * sb, const char * function,
 		ubh_mark_buffer_dirty(USPI_UBH(uspi));
 		ufs_mark_sb_dirty(sb);
 	}
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	sb->s_flags |= SB_RDONLY;
 	pr_crit("panic (device %s): %s: %pV\n",
 		sb->s_id, function, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void ufs_warning (struct super_block * sb, const char * function,
 	const char * fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	pr_warn("(device %s): %s: %pV\n",
 		sb->s_id, function, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 enum {

@@ -37,13 +37,10 @@ void ath10k_info(struct ath10k *ar, const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	dev_info(ar->dev, "%pV", &vaf);
 	trace_ath10k_log_info(ar, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath10k_info);
 
@@ -129,13 +126,10 @@ void ath10k_err(struct ath10k *ar, const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	dev_err(ar->dev, "%pV", &vaf);
 	trace_ath10k_log_err(ar, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath10k_err);
 
@@ -144,14 +138,11 @@ void ath10k_warn(struct ath10k *ar, const char *fmt, ...)
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	dev_warn_ratelimited(ar->dev, "%pV", &vaf);
 	trace_ath10k_log_warn(ar, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath10k_warn);
 
@@ -2427,19 +2418,16 @@ void ath10k_dbg(struct ath10k *ar, enum ath10k_debug_mask mask,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (ath10k_debug_mask & mask)
 		dev_printk(KERN_DEBUG, ar->dev, "%pV", &vaf);
 
 	trace_ath10k_log_dbg(ar, mask, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(ath10k_dbg);
 

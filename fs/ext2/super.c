@@ -49,7 +49,6 @@ void ext2_error(struct super_block *sb, const char *function,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	struct ext2_sb_info *sbi = EXT2_SB(sb);
 	struct ext2_super_block *es = sbi->s_es;
 
@@ -61,15 +60,13 @@ void ext2_error(struct super_block *sb, const char *function,
 		ext2_sync_super(sb, es, 1);
 	}
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk(KERN_CRIT "EXT2-fs (%s): error: %s: %pV\n",
 	       sb->s_id, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	if (test_opt(sb, ERRORS_PANIC))
 		panic("EXT2-fs: panic from previous error\n");
@@ -84,16 +81,13 @@ void ext2_msg(struct super_block *sb, const char *prefix,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk("%sEXT2-fs (%s): %pV\n", prefix, sb->s_id, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /*

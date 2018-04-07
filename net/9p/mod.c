@@ -48,22 +48,19 @@ void _p9_debug(enum p9_debug_flags level, const char *func,
 		const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if ((p9_debug_level & level) != level)
 		return;
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (level == P9_DEBUG_9P)
 		pr_notice("(%8.8d) %pV", task_pid_nr(current), &vaf);
 	else
 		pr_notice("-- %s (%d): %pV", func, task_pid_nr(current), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(_p9_debug);
 #endif

@@ -8860,16 +8860,13 @@ void netdev_printk(const char *level, const struct net_device *dev,
 		   const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	__netdev_printk(level, dev, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(netdev_printk);
 
@@ -8877,16 +8874,13 @@ EXPORT_SYMBOL(netdev_printk);
 void func(const struct net_device *dev, const char *fmt, ...)	\
 {								\
 	struct va_format vaf;					\
-	va_list args;						\
-								\
-	va_start(args, fmt);					\
 								\
 	vaf.fmt = fmt;						\
-	vaf.va = &args;						\
+	va_start(vaf.va, fmt);					\
 								\
 	__netdev_printk(level, dev, &vaf);			\
 								\
-	va_end(args);						\
+	va_end(vaf.va);						\
 }								\
 EXPORT_SYMBOL(func);
 

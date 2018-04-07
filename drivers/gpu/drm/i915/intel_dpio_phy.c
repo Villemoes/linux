@@ -489,23 +489,21 @@ __phy_reg_verify_state(struct drm_i915_private *dev_priv, enum dpio_phy phy,
 		       const char *reg_fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	u32 val;
 
 	val = I915_READ(reg);
 	if ((val & mask) == expected)
 		return true;
 
-	va_start(args, reg_fmt);
 	vaf.fmt = reg_fmt;
-	vaf.va = &args;
+	va_start(vaf.va, reg_fmt);
 
 	DRM_DEBUG_DRIVER("DDI PHY %d reg %pV [%08x] state mismatch: "
 			 "current %08x, expected %08x (mask %08x)\n",
 			 phy, &vaf, reg.reg, val, (val & ~mask) | expected,
 			 mask);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	return false;
 }

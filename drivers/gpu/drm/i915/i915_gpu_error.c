@@ -188,7 +188,7 @@ static void i915_error_puts(struct drm_i915_error_state_buf *e,
 
 static void __i915_printfn_error(struct drm_printer *p, struct va_format *vaf)
 {
-	i915_error_vprintf(p->arg, vaf->fmt, *vaf->va);
+	i915_error_vprintf(p->arg, vaf->fmt, vaf->va);
 }
 
 static inline struct drm_printer

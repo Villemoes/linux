@@ -90,7 +90,10 @@ __printf(2, 0)
 static inline void
 drm_vprintf(struct drm_printer *p, const char *fmt, va_list *va)
 {
-	struct va_format vaf = { .fmt = fmt, .va = va };
+	struct va_format vaf;
+
+	vaf.fmt = fmt;
+	va_copy(vaf.va, *va);
 
 	p->printfn(p, &vaf);
 }

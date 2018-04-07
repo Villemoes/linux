@@ -54,16 +54,13 @@ static struct rsi_proto_ops g_proto_ops = {
 void rsi_dbg(u32 zone, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (zone & rsi_zone_enabled)
 		pr_info("%pV", &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(rsi_dbg);
 

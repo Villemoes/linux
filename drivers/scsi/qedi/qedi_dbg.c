@@ -14,17 +14,14 @@ void
 qedi_dbg_err(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 	     const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char nfunc[32];
 
 	memset(nfunc, 0, sizeof(nfunc));
 	memcpy(nfunc, func, sizeof(nfunc) - 1);
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	if (likely(qedi) && likely(qedi->pdev))
 		pr_err("[%s]:[%s:%d]:%d: %pV", dev_name(&qedi->pdev->dev),
@@ -32,24 +29,21 @@ qedi_dbg_err(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 	else
 		pr_err("[0000:00:00.0]:[%s:%d]: %pV", nfunc, line, &vaf);
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 void
 qedi_dbg_warn(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 	      const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char nfunc[32];
 
 	memset(nfunc, 0, sizeof(nfunc));
 	memcpy(nfunc, func, sizeof(nfunc) - 1);
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	if (!(qedi_dbg_log & QEDI_LOG_WARN))
 		goto ret;
@@ -61,24 +55,21 @@ qedi_dbg_warn(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 		pr_warn("[0000:00:00.0]:[%s:%d]: %pV", nfunc, line, &vaf);
 
 ret:
-	va_end(va);
+	va_end(vaf.va);
 }
 
 void
 qedi_dbg_notice(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 		const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char nfunc[32];
 
 	memset(nfunc, 0, sizeof(nfunc));
 	memcpy(nfunc, func, sizeof(nfunc) - 1);
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	if (!(qedi_dbg_log & QEDI_LOG_NOTICE))
 		goto ret;
@@ -91,24 +82,21 @@ qedi_dbg_notice(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 		pr_notice("[0000:00:00.0]:[%s:%d]: %pV", nfunc, line, &vaf);
 
 ret:
-	va_end(va);
+	va_end(vaf.va);
 }
 
 void
 qedi_dbg_info(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 	      u32 level, const char *fmt, ...)
 {
-	va_list va;
 	struct va_format vaf;
 	char nfunc[32];
 
 	memset(nfunc, 0, sizeof(nfunc));
 	memcpy(nfunc, func, sizeof(nfunc) - 1);
 
-	va_start(va, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	if (!(qedi_dbg_log & level))
 		goto ret;
@@ -120,7 +108,7 @@ qedi_dbg_info(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
 		pr_info("[0000:00:00.0]:[%s:%d]: %pV", nfunc, line, &vaf);
 
 ret:
-	va_end(va);
+	va_end(vaf.va);
 }
 
 int

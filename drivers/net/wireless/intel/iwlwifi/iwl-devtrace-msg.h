@@ -43,7 +43,7 @@ DECLARE_EVENT_CLASS(iwlwifi_msg_event,
 	TP_fast_assign(
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       MAX_MSG_LEN, vaf->fmt,
-				       *vaf->va) >= MAX_MSG_LEN);
+				       vaf->va) >= MAX_MSG_LEN);
 	),
 	TP_printk("%s", __get_str(msg))
 );
@@ -84,7 +84,7 @@ TRACE_EVENT(iwlwifi_dbg,
 		__assign_str(function, function);
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       MAX_MSG_LEN, vaf->fmt,
-				       *vaf->va) >= MAX_MSG_LEN);
+				       vaf->va) >= MAX_MSG_LEN);
 	),
 	TP_printk("%s", __get_str(msg))
 );

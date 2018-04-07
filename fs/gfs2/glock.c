@@ -979,20 +979,17 @@ static void handle_callback(struct gfs2_glock *gl, unsigned int state,
 void gfs2_print_dbg(struct seq_file *seq, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	if (seq) {
 		seq_vprintf(seq, fmt, args);
 	} else {
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 
 		pr_err("%pV", &vaf);
 	}
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /**

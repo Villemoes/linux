@@ -68,7 +68,6 @@ void __mlog_printk(const u64 *mask, const char *func, int line,
 		   const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	const char *level;
 	const char *prefix = "";
 
@@ -85,16 +84,14 @@ void __mlog_printk(const u64 *mask, const char *func, int line,
 		level = KERN_INFO;
 	}
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk("%s(%s,%u,%u):%s:%d %s%pV",
 	       level, current->comm, task_pid_nr(current),
 	       raw_smp_processor_id(), func, line, prefix, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(__mlog_printk);
 

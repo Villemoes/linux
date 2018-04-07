@@ -11060,18 +11060,15 @@ static void __printf(3, 4)
 pipe_config_err(bool adjust, const char *name, const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	if (adjust)
 		drm_dbg(DRM_UT_KMS, "mismatch in %s %pV", name, &vaf);
 	else
 		drm_err("mismatch in %s %pV", name, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 static bool

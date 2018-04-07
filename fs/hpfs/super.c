@@ -56,16 +56,13 @@ static void unmark_dirty(struct super_block *s)
 void hpfs_error(struct super_block *s, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_err("filesystem error: %pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	if (!hpfs_sb(s)->sb_was_error) {
 		if (hpfs_sb(s)->sb_err == 2) {

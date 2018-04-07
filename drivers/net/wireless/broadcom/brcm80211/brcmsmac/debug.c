@@ -235,13 +235,13 @@ void __brcms_ ##fn(struct device *dev, const char *fmt, ...)	\
 	struct va_format vaf = {				\
 		.fmt = fmt,					\
 	};							\
-	va_list args;						\
+							\
 								\
-	va_start(args, fmt);					\
-	vaf.va = &args;						\
+						\
+	va_start(vaf.va, fmt);						\
 	dev_ ##fn(dev, "%pV", &vaf);				\
 	trace_brcms_ ##fn(&vaf);				\
-	va_end(args);						\
+	va_end(vaf.va);						\
 }
 
 __brcms_fn(info)
@@ -256,15 +256,12 @@ void __brcms_dbg(struct device *dev, u32 level, const char *func,
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 #ifdef CONFIG_BRCMDBG
 	if ((brcm_msg_level & level) && net_ratelimit())
 		dev_err(dev, "%s %pV", func, &vaf);
 #endif
 	trace_brcms_dbg(level, func, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 #endif

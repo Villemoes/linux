@@ -46,16 +46,13 @@ cifs_dump_mem(char *label, void *data, int length)
 void cifs_vfs_err(const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_err_ratelimited("CIFS VFS: %pV", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 #endif
 

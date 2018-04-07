@@ -55,16 +55,13 @@ static __printf(3, 4)
 void _ldm_printk(const char *level, const char *function, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start (args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk("%s%s(): %pV\n", level, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /**

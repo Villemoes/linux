@@ -85,7 +85,7 @@ struct ctl_table;
 
 struct va_format {
 	const char *fmt;
-	va_list *va;
+	va_list va;
 };
 
 /*

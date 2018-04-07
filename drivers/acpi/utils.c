@@ -496,17 +496,15 @@ void
 acpi_handle_printk(const char *level, acpi_handle handle, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	const char *path;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	path = acpi_handle_path(handle);
 	printk("%sACPI: %s: %pV", level, path ? path : "<n/a>" , &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 	kfree(path);
 }
 EXPORT_SYMBOL(acpi_handle_printk);
@@ -525,17 +523,15 @@ __acpi_handle_debug(struct _ddebug *descriptor, acpi_handle handle,
 		    const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	const char *path;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	path = acpi_handle_path(handle);
 	__dynamic_pr_debug(descriptor, "ACPI: %s: %pV", path ? path : "<n/a>", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 	kfree(path);
 }
 EXPORT_SYMBOL(__acpi_handle_debug);

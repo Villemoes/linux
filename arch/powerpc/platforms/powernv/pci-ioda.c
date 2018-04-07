@@ -62,13 +62,10 @@ void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
 			    const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	char pfix[32];
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (pe->flags & PNV_IODA_PE_DEV)
 		strlcpy(pfix, dev_name(&pe->pdev->dev), sizeof(pfix));
@@ -86,7 +83,7 @@ void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
 	printk("%spci %s: [PE# %.2x] %pV",
 	       level, pfix, pe->pe_number, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 
 static bool pnv_iommu_bypass_disabled __read_mostly;

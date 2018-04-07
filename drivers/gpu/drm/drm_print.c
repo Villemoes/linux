@@ -67,11 +67,9 @@ void drm_dev_printk(const struct device *dev, const char *level,
 		    const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
-	va_start(args, format);
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	if (dev)
 		dev_printk(level, dev, "[" DRM_NAME ":%ps] %pV",
@@ -80,7 +78,7 @@ void drm_dev_printk(const struct device *dev, const char *level,
 		printk("%s" "[" DRM_NAME ":%ps] %pV",
 		       level, __builtin_return_address(0), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(drm_dev_printk);
 
@@ -88,14 +86,12 @@ void drm_dev_dbg(const struct device *dev, unsigned int category,
 		 const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!(drm_debug & category))
 		return;
 
-	va_start(args, format);
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	if (dev)
 		dev_printk(KERN_DEBUG, dev, "[" DRM_NAME ":%ps] %pV",
@@ -104,41 +100,36 @@ void drm_dev_dbg(const struct device *dev, unsigned int category,
 		printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
 		       __builtin_return_address(0), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(drm_dev_dbg);
 
 void drm_dbg(unsigned int category, const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!(drm_debug & category))
 		return;
 
-	va_start(args, format);
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
 	       __builtin_return_address(0), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(drm_dbg);
 
 void drm_err(const char *format, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, format);
 	vaf.fmt = format;
-	vaf.va = &args;
+	va_start(vaf.va, format);
 
 	printk(KERN_ERR "[" DRM_NAME ":%ps] *ERROR* %pV",
 	       __builtin_return_address(0), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(drm_err);

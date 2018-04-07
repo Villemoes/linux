@@ -1128,17 +1128,14 @@ static __printf(2, 3)
 void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 	char 	buf[RPC_MAX_ADDRBUFLEN];
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	dprintk("svc: %s: %pV", svc_print_addr(rqstp, buf, sizeof(buf)), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 #else
 static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}

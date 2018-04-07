@@ -86,7 +86,7 @@ DECLARE_EVENT_CLASS(wil6210_log_event,
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       WIL6210_MSG_MAX,
 				       vaf->fmt,
-				       *vaf->va) >= WIL6210_MSG_MAX);
+				       vaf->va) >= WIL6210_MSG_MAX);
 	),
 	TP_printk("%s", __get_str(msg))
 );

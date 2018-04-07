@@ -19,15 +19,13 @@
 void __fat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
 {
 	struct fat_mount_options *opts = &MSDOS_SB(sb)->options;
-	va_list args;
 	struct va_format vaf;
 
 	if (report) {
-		va_start(args, fmt);
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 		fat_msg(sb, KERN_ERR, "error, %pV", &vaf);
-		va_end(args);
+		va_end(vaf.va);
 	}
 
 	if (opts->errors == FAT_ERRORS_PANIC)
@@ -46,13 +44,10 @@ EXPORT_SYMBOL_GPL(__fat_fs_error);
 void fat_msg(struct super_block *sb, const char *level, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk("%sFAT-fs (%s): %pV\n", level, sb->s_id, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 /* Flushes the number of free clusters on FAT32 */

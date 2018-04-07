@@ -29,26 +29,20 @@ void
 befs_error(const struct super_block *sb, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	pr_err("(%s): %pV\n", sb->s_id, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void
 befs_warning(const struct super_block *sb, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	pr_warn("(%s): %pV\n", sb->s_id, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void
@@ -57,13 +51,10 @@ befs_debug(const struct super_block *sb, const char *fmt, ...)
 #ifdef CONFIG_BEFS_DEBUG
 
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	pr_debug("(%s): %pV\n", sb->s_id, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 
 #endif				//CONFIG_BEFS_DEBUG
 }

@@ -75,16 +75,13 @@ void __nilfs_msg(struct super_block *sb, const char *level, const char *fmt,
 		 ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	if (sb)
 		printk("%sNILFS (%s): %pV\n", level, sb->s_id, &vaf);
 	else
 		printk("%sNILFS: %pV\n", level, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 static void nilfs_set_error(struct super_block *sb)
@@ -124,17 +121,14 @@ void __nilfs_error(struct super_block *sb, const char *function,
 {
 	struct the_nilfs *nilfs = sb->s_fs_info;
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk(KERN_CRIT "NILFS error (device %s): %s: %pV\n",
 	       sb->s_id, function, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	if (!sb_rdonly(sb)) {
 		nilfs_set_error(sb);

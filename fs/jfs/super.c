@@ -96,17 +96,14 @@ static void jfs_handle_error(struct super_block *sb)
 void jfs_error(struct super_block *sb, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	pr_err("ERROR: (device %s): %ps: %pV\n",
 	       sb->s_id, __builtin_return_address(0), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 
 	jfs_handle_error(sb);
 }

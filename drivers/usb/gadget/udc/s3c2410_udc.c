@@ -93,15 +93,12 @@ static void dprintk(int level, const char *fmt, ...)
 	static long prevticks;
 	static int invocation;
 	struct va_format vaf;
-	va_list args;
 
 	if (level > USB_S3C2410_DEBUG_LEVEL)
 		return;
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (s3c2410_ticks != prevticks) {
 		prevticks = s3c2410_ticks;
@@ -110,7 +107,7 @@ static void dprintk(int level, const char *fmt, ...)
 
 	pr_debug("%1lu.%02d USB: %pV", prevticks, invocation++, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 #else
 __printf(2, 3)

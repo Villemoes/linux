@@ -441,20 +441,18 @@ void __ext4_error(struct super_block *sb, const char *function,
 		  unsigned int line, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(sb))))
 		return;
 
 	trace_ext4_error(sb, function, line);
 	if (ext4_error_ratelimit(sb)) {
-		va_start(args, fmt);
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 		printk(KERN_CRIT
 		       "EXT4-fs error (device %s): %s:%d: comm %s: %pV\n",
 		       sb->s_id, function, line, current->comm, &vaf);
-		va_end(args);
+		va_end(vaf.va);
 	}
 	save_error_info(sb, function, line);
 	ext4_handle_error(sb);
@@ -464,7 +462,6 @@ void __ext4_error_inode(struct inode *inode, const char *function,
 			unsigned int line, ext4_fsblk_t block,
 			const char *fmt, ...)
 {
-	va_list args;
 	struct va_format vaf;
 	struct ext4_super_block *es = EXT4_SB(inode->i_sb)->s_es;
 
@@ -475,9 +472,8 @@ void __ext4_error_inode(struct inode *inode, const char *function,
 	es->s_last_error_ino = cpu_to_le32(inode->i_ino);
 	es->s_last_error_block = cpu_to_le64(block);
 	if (ext4_error_ratelimit(inode->i_sb)) {
-		va_start(args, fmt);
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 		if (block)
 			printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: "
 			       "inode #%lu: block %llu: comm %s: %pV\n",
@@ -488,7 +484,7 @@ void __ext4_error_inode(struct inode *inode, const char *function,
 			       "inode #%lu: comm %s: %pV\n",
 			       inode->i_sb->s_id, function, line, inode->i_ino,
 			       current->comm, &vaf);
-		va_end(args);
+		va_end(vaf.va);
 	}
 	save_error_info(inode->i_sb, function, line);
 	ext4_handle_error(inode->i_sb);
@@ -498,7 +494,6 @@ void __ext4_error_file(struct file *file, const char *function,
 		       unsigned int line, ext4_fsblk_t block,
 		       const char *fmt, ...)
 {
-	va_list args;
 	struct va_format vaf;
 	struct ext4_super_block *es;
 	struct inode *inode = file_inode(file);
@@ -514,9 +509,8 @@ void __ext4_error_file(struct file *file, const char *function,
 		path = file_path(file, pathname, sizeof(pathname));
 		if (IS_ERR(path))
 			path = "(unknown)";
-		va_start(args, fmt);
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 		if (block)
 			printk(KERN_CRIT
 			       "EXT4-fs error (device %s): %s:%d: inode #%lu: "
@@ -529,7 +523,7 @@ void __ext4_error_file(struct file *file, const char *function,
 			       "comm %s: path %s: %pV\n",
 			       inode->i_sb->s_id, function, line, inode->i_ino,
 			       current->comm, path, &vaf);
-		va_end(args);
+		va_end(vaf.va);
 	}
 	save_error_info(inode->i_sb, function, line);
 	ext4_handle_error(inode->i_sb);
@@ -617,18 +611,16 @@ void __ext4_abort(struct super_block *sb, const char *function,
 		unsigned int line, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(sb))))
 		return;
 
 	save_error_info(sb, function, line);
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: %pV\n",
 	       sb->s_id, function, line, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 
 	if (sb_rdonly(sb) == 0) {
 		ext4_msg(sb, KERN_CRIT, "Remounting filesystem read-only");
@@ -655,16 +647,14 @@ void __ext4_msg(struct super_block *sb,
 		const char *prefix, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!___ratelimit(&(EXT4_SB(sb)->s_msg_ratelimit_state), "EXT4-fs"))
 		return;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk("%sEXT4-fs (%s): %pV\n", prefix, sb->s_id, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 #define ext4_warning_ratelimit(sb)					\
@@ -675,35 +665,31 @@ void __ext4_warning(struct super_block *sb, const char *function,
 		    unsigned int line, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!ext4_warning_ratelimit(sb))
 		return;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk(KERN_WARNING "EXT4-fs warning (device %s): %s:%d: %pV\n",
 	       sb->s_id, function, line, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void __ext4_warning_inode(const struct inode *inode, const char *function,
 			  unsigned int line, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (!ext4_warning_ratelimit(inode->i_sb))
 		return;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	printk(KERN_WARNING "EXT4-fs warning (device %s): %s:%d: "
 	       "inode #%lu: comm %s: %pV\n", inode->i_sb->s_id,
 	       function, line, inode->i_ino, current->comm, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 void __ext4_grp_locked_error(const char *function, unsigned int line,
@@ -714,7 +700,6 @@ __releases(bitlock)
 __acquires(bitlock)
 {
 	struct va_format vaf;
-	va_list args;
 	struct ext4_super_block *es = EXT4_SB(sb)->s_es;
 
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(sb))))
@@ -726,9 +711,8 @@ __acquires(bitlock)
 	__save_error_info(sb, function, line);
 
 	if (ext4_error_ratelimit(sb)) {
-		va_start(args, fmt);
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 		printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: group %u, ",
 		       sb->s_id, function, line, grp);
 		if (ino)
@@ -737,7 +721,7 @@ __acquires(bitlock)
 			printk(KERN_CONT "block %llu:",
 			       (unsigned long long) block);
 		printk(KERN_CONT "%pV\n", &vaf);
-		va_end(args);
+		va_end(vaf.va);
 	}
 
 	if (test_opt(sb, ERRORS_CONT)) {

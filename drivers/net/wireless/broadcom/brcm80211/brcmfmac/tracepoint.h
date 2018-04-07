@@ -50,7 +50,7 @@ TRACE_EVENT(brcmf_err,
 		__assign_str(func, func);
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       MAX_MSG_LEN, vaf->fmt,
-				       *vaf->va) >= MAX_MSG_LEN);
+				       vaf->va) >= MAX_MSG_LEN);
 	),
 	TP_printk("%s: %s", __get_str(func), __get_str(msg))
 );
@@ -68,7 +68,7 @@ TRACE_EVENT(brcmf_dbg,
 		__assign_str(func, func);
 		WARN_ON_ONCE(vsnprintf(__get_dynamic_array(msg),
 				       MAX_MSG_LEN, vaf->fmt,
-				       *vaf->va) >= MAX_MSG_LEN);
+				       vaf->va) >= MAX_MSG_LEN);
 	),
 	TP_printk("%s: %s", __get_str(func), __get_str(msg))
 );

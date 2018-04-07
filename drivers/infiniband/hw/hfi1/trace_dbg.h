@@ -73,7 +73,7 @@ DECLARE_EVENT_CLASS(hfi1_trace_template,
 				   WARN_ON_ONCE(vsnprintf
 						(__get_dynamic_array(msg),
 						 MAX_MSG_LEN, vaf->fmt,
-						 *vaf->va) >=
+						 vaf->va) >=
 						MAX_MSG_LEN);
 				   ),
 		    TP_printk("(%s) %s",
@@ -98,12 +98,12 @@ void __hfi1_trace_##lvl(const char *func, char *fmt, ...)		\
 	struct va_format vaf = {					\
 		.fmt = fmt,						\
 	};								\
-	va_list args;							\
+								\
 									\
-	va_start(args, fmt);						\
-	vaf.va = &args;							\
+							\
+	va_start(vaf.va, fmt);							\
 	trace_hfi1_ ##lvl(func, &vaf);					\
-	va_end(args);							\
+	va_end(vaf.va);							\
 	return;								\
 }
 

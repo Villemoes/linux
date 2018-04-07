@@ -72,19 +72,17 @@ void nf_l4proto_log_invalid(const struct sk_buff *skb,
 			    const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	if (net->ct.sysctl_log_invalid != protonum ||
 	    net->ct.sysctl_log_invalid != IPPROTO_RAW)
 		return;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	nf_log_packet(net, pf, 0, skb, NULL, NULL, NULL,
 		      "nf_ct_proto_%d: %pV ", protonum, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(nf_l4proto_log_invalid);
 
@@ -95,19 +93,17 @@ void nf_ct_l4proto_log_invalid(const struct sk_buff *skb,
 {
 	struct va_format vaf;
 	struct net *net;
-	va_list args;
 
 	net = nf_ct_net(ct);
 	if (likely(net->ct.sysctl_log_invalid == 0))
 		return;
 
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	nf_l4proto_log_invalid(skb, net, nf_ct_l3num(ct),
 			       nf_ct_protonum(ct), "%pV", &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL_GPL(nf_ct_l4proto_log_invalid);
 #endif

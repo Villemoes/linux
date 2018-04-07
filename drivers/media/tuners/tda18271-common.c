@@ -718,12 +718,9 @@ void _tda_printk(struct tda18271_priv *state, const char *level,
 		 const char *func, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (state)
 		printk("%s%s: [%d-%04x|%c] %pV",
@@ -734,5 +731,5 @@ void _tda_printk(struct tda18271_priv *state, const char *level,
 	else
 		printk("%s%s: %pV", level, func, &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }

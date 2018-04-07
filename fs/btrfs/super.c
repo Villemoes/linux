@@ -131,15 +131,12 @@ void __btrfs_handle_fs_error(struct btrfs_fs_info *fs_info, const char *function
 	errstr = btrfs_decode_error(errno);
 	if (fmt) {
 		struct va_format vaf;
-		va_list args;
-
-		va_start(args, fmt);
 		vaf.fmt = fmt;
-		vaf.va = &args;
+		va_start(vaf.va, fmt);
 
 		pr_crit("BTRFS: error (device %s) in %s:%d: errno=%d %s (%pV)\n",
 			sb->s_id, function, line, errno, errstr, &vaf);
-		va_end(args);
+		va_end(vaf.va);
 	} else {
 		pr_crit("BTRFS: error (device %s) in %s:%d: errno=%d %s\n",
 			sb->s_id, function, line, errno, errstr);
@@ -204,12 +201,9 @@ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
 {
 	char lvl[PRINTK_MAX_SINGLE_HEADER_LEN + 1] = "\0";
 	struct va_format vaf;
-	va_list args;
 	int kern_level;
 	const char *type = logtypes[4];
 	struct ratelimit_state *ratelimit = &printk_limits[4];
-
-	va_start(args, fmt);
 
 	while ((kern_level = printk_get_level(fmt)) != 0) {
 		size_t size = printk_skip_level(fmt) - fmt;
@@ -224,13 +218,13 @@ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
 	}
 
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (__ratelimit(ratelimit))
 		printk("%sBTRFS %s (device %s): %pV\n", lvl, type,
 			fs_info ? fs_info->sb->s_id : "<unknown>", &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 #endif
 
@@ -283,13 +277,11 @@ void __btrfs_panic(struct btrfs_fs_info *fs_info, const char *function,
 	char *s_id = "<unknown>";
 	const char *errstr;
 	struct va_format vaf = { .fmt = fmt };
-	va_list args;
 
 	if (fs_info)
 		s_id = fs_info->sb->s_id;
 
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	errstr = btrfs_decode_error(errno);
 	if (fs_info && (btrfs_test_opt(fs_info, PANIC_ON_FATAL_ERROR)))
@@ -298,7 +290,7 @@ void __btrfs_panic(struct btrfs_fs_info *fs_info, const char *function,
 
 	btrfs_crit(fs_info, "panic in %s:%d: %pV (errno=%d %s)",
 		   function, line, &vaf, errno, errstr);
-	va_end(args);
+	va_end(vaf.va);
 	/* Caller calls BUG() */
 }
 

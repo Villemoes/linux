@@ -550,11 +550,8 @@ static __printf(2, 3)
 void rbd_warn(struct rbd_device *rbd_dev, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
-
-	va_start(args, fmt);
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (!rbd_dev)
 		printk(KERN_WARNING "%s: %pV\n", RBD_DRV_NAME, &vaf);
@@ -570,7 +567,7 @@ void rbd_warn(struct rbd_device *rbd_dev, const char *fmt, ...)
 	else	/* punt */
 		printk(KERN_WARNING "%s: rbd_dev %p: %pV\n",
 			RBD_DRV_NAME, rbd_dev, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 
 #ifdef RBD_DEBUG

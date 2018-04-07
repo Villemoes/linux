@@ -43,16 +43,14 @@ __xfs_printk(
 void func(const struct xfs_mount *mp, const char *fmt, ...)	\
 {								\
 	struct va_format	vaf;				\
-	va_list			args;				\
+					\
 	int			level;				\
 								\
-	va_start(args, fmt);					\
-								\
 	vaf.fmt = fmt;						\
-	vaf.va = &args;						\
+	va_start(vaf.va, fmt);						\
 								\
 	__xfs_printk(kern_level, mp, &vaf);			\
-	va_end(args);						\
+	va_end(vaf.va);						\
 								\
 	if (!kstrtoint(kern_level, 0, &level) &&		\
 	    level <= LOGLEVEL_ERR &&				\
@@ -78,7 +76,6 @@ xfs_alert_tag(
 	const char		*fmt, ...)
 {
 	struct va_format	vaf;
-	va_list			args;
 	int			do_panic = 0;
 
 	if (xfs_panic_mask && (xfs_panic_mask & panic_tag)) {
@@ -86,13 +83,11 @@ xfs_alert_tag(
 		do_panic = 1;
 	}
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	__xfs_printk(KERN_ALERT, mp, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 
 	BUG_ON(do_panic);
 }

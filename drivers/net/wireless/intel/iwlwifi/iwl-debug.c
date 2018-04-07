@@ -74,13 +74,13 @@ void __iwl_ ##fn(struct device *dev, const char *fmt, ...)	\
 	struct va_format vaf = {				\
 		.fmt = fmt,					\
 	};							\
-	va_list args;						\
+							\
 								\
-	va_start(args, fmt);					\
-	vaf.va = &args;						\
+						\
+	va_start(vaf.va, fmt);						\
 	dev_ ##fn(dev, "%pV", &vaf);				\
 	trace_iwlwifi_ ##fn(&vaf);				\
-	va_end(args);						\
+	va_end(vaf.va);						\
 }
 
 __iwl_fn(warn)
@@ -96,10 +96,7 @@ void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only,
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 	if (!trace_only) {
 		if (rfkill_prefix)
 			dev_err(dev, "(RFKILL) %pV", &vaf);
@@ -107,7 +104,7 @@ void __iwl_err(struct device *dev, bool rfkill_prefix, bool trace_only,
 			dev_err(dev, "%pV", &vaf);
 	}
 	trace_iwlwifi_err(&vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 IWL_EXPORT_SYMBOL(__iwl_err);
 
@@ -119,10 +116,7 @@ void __iwl_dbg(struct device *dev,
 	struct va_format vaf = {
 		.fmt = fmt,
 	};
-	va_list args;
-
-	va_start(args, fmt);
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 #ifdef CONFIG_IWLWIFI_DEBUG
 	if (iwl_have_debug_level(level) &&
 	    (!limit || net_ratelimit()))
@@ -130,7 +124,7 @@ void __iwl_dbg(struct device *dev,
 			   in_interrupt() ? 'I' : 'U', function, &vaf);
 #endif
 	trace_iwlwifi_dbg(level, in_interrupt(), function, &vaf);
-	va_end(args);
+	va_end(vaf.va);
 }
 IWL_EXPORT_SYMBOL(__iwl_dbg);
 #endif

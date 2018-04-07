@@ -102,16 +102,13 @@ l1m_debug(struct FsmInst *fi, char *fmt, ...)
 {
 	struct layer1 *l1 = fi->userdata;
 	struct va_format vaf;
-	va_list va;
-
-	va_start(va, fmt);
 
 	vaf.fmt = fmt;
-	vaf.va = &va;
+	va_start(vaf.va, fmt);
 
 	printk(KERN_DEBUG "%s: %pV\n", dev_name(&l1->dch->dev.dev), &vaf);
 
-	va_end(va);
+	va_end(vaf.va);
 }
 
 static void

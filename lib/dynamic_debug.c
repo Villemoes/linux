@@ -550,21 +550,18 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
 
 void __dynamic_pr_debug(struct _ddebug *descriptor, const char *fmt, ...)
 {
-	va_list args;
 	struct va_format vaf;
 	char buf[PREFIX_SIZE];
 
 	BUG_ON(!descriptor);
 	BUG_ON(!fmt);
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	printk(KERN_DEBUG "%s%pV", dynamic_emit_prefix(descriptor, buf), &vaf);
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(__dynamic_pr_debug);
 
@@ -572,15 +569,12 @@ void __dynamic_dev_dbg(struct _ddebug *descriptor,
 		      const struct device *dev, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	BUG_ON(!descriptor);
 	BUG_ON(!fmt);
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (!dev) {
 		printk(KERN_DEBUG "(NULL device *): %pV", &vaf);
@@ -593,7 +587,7 @@ void __dynamic_dev_dbg(struct _ddebug *descriptor,
 				&vaf);
 	}
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(__dynamic_dev_dbg);
 
@@ -603,15 +597,12 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
 			  const struct net_device *dev, const char *fmt, ...)
 {
 	struct va_format vaf;
-	va_list args;
 
 	BUG_ON(!descriptor);
 	BUG_ON(!fmt);
 
-	va_start(args, fmt);
-
 	vaf.fmt = fmt;
-	vaf.va = &args;
+	va_start(vaf.va, fmt);
 
 	if (dev && dev->dev.parent) {
 		char buf[PREFIX_SIZE];
@@ -630,7 +621,7 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
 		printk(KERN_DEBUG "(NULL net_device): %pV", &vaf);
 	}
 
-	va_end(args);
+	va_end(vaf.va);
 }
 EXPORT_SYMBOL(__dynamic_netdev_dbg);
 
