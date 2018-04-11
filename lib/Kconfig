@@ -614,3 +614,7 @@ config GENERIC_LIB_CMPDI2
 
 config GENERIC_LIB_UCMPDI2
 	bool
+
+config OOL_VA_ARG
+       bool
+       default y if X86_64
