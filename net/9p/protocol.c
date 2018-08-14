@@ -31,6 +31,7 @@
 #include <linux/uaccess.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
+#include <linux/stdarg.h>
 #include <linux/stddef.h>
 #include <linux/types.h>
 #include <linux/uio.h>
