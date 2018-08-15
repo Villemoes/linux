@@ -196,8 +196,10 @@ extern int bitmap_print_to_pagebuf(bool list, char *buf,
 #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
 #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
 
+int const_zero_size_bitmaps_are_buggy(void);
 #define small_const_nbits(nbits) \
-	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG)
+	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG && \
+	 ((nbits) > 0 || const_zero_size_bitmaps_are_buggy()))
 
 static inline void bitmap_zero(unsigned long *dst, unsigned int nbits)
 {
