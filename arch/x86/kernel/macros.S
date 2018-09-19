@@ -14,3 +14,4 @@
 #include <asm/asm.h>
 #include <asm/cpufeature.h>
 #include <asm/jump_label.h>
+#include <asm/dynamic_debug.h>
