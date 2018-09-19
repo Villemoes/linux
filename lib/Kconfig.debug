@@ -164,6 +164,19 @@ config DYNAMIC_DEBUG
 	  See Documentation/admin-guide/dynamic-debug-howto.rst for additional
 	  information.
 
+config HAVE_DYNAMIC_DEBUG_RELATIVE_POINTERS
+	bool
+
+config DYNAMIC_DEBUG_RELATIVE_POINTERS
+	bool "Reduce size of dynamic debug metadata"
+	depends on DYNAMIC_DEBUG
+	depends on HAVE_DYNAMIC_DEBUG_RELATIVE_POINTERS
+	help
+	  If you say Y here, the static memory footprint of the kernel
+	  image will be reduced somewhat (about 40K for a typical
+	  distro kernel). There is no performance difference either
+	  way.
+
 endmenu # "printk and dmesg options"
 
 menu "Compile-time checks and compiler options"
