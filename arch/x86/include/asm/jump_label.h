@@ -12,6 +12,7 @@
 
 #include <asm/asm.h>
 #include <asm/nops.h>
+#include <asm-generic/jump_label.h>
 
 #ifndef __ASSEMBLY__
 
@@ -62,6 +63,22 @@ l_yes:
 	.long		.Lstatic_branch_jmp_\@ - ., \l_yes - .
 	_ASM_PTR	\key + \branch - .
 	.popsection
+.endm
+
+.macro STATIC_KEY_INIT enabled:req type:req
+	.long \enabled    # .enabled
+#ifdef CONFIG_X86_64
+	.long 0           # <padding>
+#endif
+	_ASM_PTR \type    # .type
+.endm
+
+.macro STATIC_KEY_INIT_TRUE
+	STATIC_KEY_INIT 1 JUMP_TYPE_TRUE
+.endm
+
+.macro STATIC_KEY_INIT_FALSE
+	STATIC_KEY_INIT 0 JUMP_TYPE_FALSE
 .endm
 
 #endif	/* __ASSEMBLY__ */
