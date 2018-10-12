@@ -92,6 +92,7 @@
 #include <linux/rodata_test.h>
 #include <linux/jump_label.h>
 #include <linux/mem_encrypt.h>
+#include <linux/rai.h>
 
 #include <asm/io.h>
 #include <asm/bugs.h>
@@ -1066,6 +1067,7 @@ static int __ref kernel_init(void *unused)
 	ftrace_free_init_mem();
 	free_initmem();
 	mark_readonly();
+	update_rai_access();
 
 	/*
 	 * Kernel mappings are now finalized - update the userspace page-table
