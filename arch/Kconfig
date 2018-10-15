@@ -275,6 +275,9 @@ config ARCH_THREAD_STACK_ALLOCATOR
 config ARCH_WANTS_DYNAMIC_TASK_STRUCT
 	bool
 
+config ARCH_HAS_RAI
+	bool
+
 config HAVE_REGS_AND_STACK_ACCESS_API
 	bool
 	help
