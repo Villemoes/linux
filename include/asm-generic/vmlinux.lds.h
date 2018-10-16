@@ -257,6 +257,7 @@
 	__start___verbose = .;						\
 	KEEP(*(__verbose))                                              \
 	__stop___verbose = .;						\
+	KEEP(*(.rai_templ))						\
 	LIKELY_PROFILE()		       				\
 	BRANCH_PROFILE()						\
 	TRACE_PRINTKS()							\
@@ -328,6 +329,9 @@
 		__start___tracepoints_ptrs = .;				\
 		KEEP(*(__tracepoints_ptrs)) /* Tracepoints: pointer array */ \
 		__stop___tracepoints_ptrs = .;				\
+		__start_rai_data = .;					\
+		KEEP(*(.rai_data))					\
+		__stop_rai_data = .;					\
 		*(__tracepoints_strings)/* Tracepoints: strings */	\
 	}								\
 									\
@@ -494,6 +498,7 @@
 #define TEXT_TEXT							\
 		ALIGN_FUNCTION();					\
 		*(.text.hot TEXT_MAIN .text.fixup .text.unlikely)	\
+		*(.text.rai_thunk)					\
 		*(.text..refcount)					\
 		*(.ref.text)						\
 	MEM_KEEP(init.text*)						\
