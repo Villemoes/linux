@@ -19,6 +19,7 @@
 #include <linux/ratelimit.h>
 #include <linux/list_lru.h>
 #include <linux/iversion.h>
+#include <linux/rai.h>
 #include <trace/events/writeback.h>
 #include "internal.h"
 
@@ -74,7 +75,8 @@ struct inodes_stat_t inodes_stat;
 static DEFINE_PER_CPU(unsigned long, nr_inodes);
 static DEFINE_PER_CPU(unsigned long, nr_unused);
 
-static struct kmem_cache *inode_cachep __read_mostly;
+static struct kmem_cache *__inode_cachep __read_mostly;
+#define inode_cachep rai_load(__inode_cachep)
 
 static long get_nr_inodes(void)
 {
@@ -1951,7 +1953,7 @@ void __init inode_init_early(void)
 void __init inode_init(void)
 {
 	/* inode slab cache */
-	inode_cachep = kmem_cache_create("inode_cache",
+	__inode_cachep = kmem_cache_create("inode_cache",
 					 sizeof(struct inode),
 					 0,
 					 (SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|
