@@ -14,6 +14,24 @@ rai_patch_one(const struct rai_entry *r)
 	u8 *thunk = (u8*)&r->thunk_offset + r->thunk_offset;
 
 	switch (r->type) {
+	case RAI_LOAD_4: {
+		const u32 *imm = r->load.addr;
+		/*
+		 * The immediate is the last 4 bytes of the template,
+		 * regardless of the operand encoding.
+		 */
+		memcpy(templ + r->templ_len - sizeof(*imm), imm, sizeof(*imm));
+		break;
+	}
+	case RAI_LOAD_8: {
+		const u64 *imm = r->load.addr;
+		/*
+		 * The immediate is the last 8 bytes of the template,
+		 * regardless of the operand encoding.
+		 */
+		memcpy(templ + r->templ_len - sizeof(*imm), imm, sizeof(*imm));
+		break;
+	}
 	default:
 		WARN_ONCE(1, "unhandled RAI type %d\n", r->type);
 		return;
