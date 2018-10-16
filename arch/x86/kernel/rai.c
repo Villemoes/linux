@@ -37,3 +37,43 @@ update_rai_access(void)
 	rai_patch(__start_rai_data, __stop_rai_data);
 	mutex_unlock(&text_mutex);
 }
+
+#if 1
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+
+static int one, two;
+static long three;
+
+static int
+rai_proc_show(struct seq_file *m, void *v) {
+	seq_printf(m, "one: %d, two: %d, three: %ld\n",
+		   rai_load(one), rai_load(two), rai_load(three));
+	one = two = three = -1;
+
+	return 0;
+}
+
+static int
+rai_proc_open(struct inode *inode, struct  file *file) {
+	return single_open(file, rai_proc_show, NULL);
+}
+
+static const struct file_operations rai_proc_fops = {
+	.owner = THIS_MODULE,
+	.open = rai_proc_open,
+	.read = seq_read,
+	.llseek = seq_lseek,
+	.release = single_release,
+};
+
+static int __init rai_proc_init(void) {
+	one = 1;
+	two = 2;
+	three = 3;
+
+	proc_create("rai", 0, NULL, &rai_proc_fops);
+	return 0;
+}
+late_initcall(rai_proc_init);
+#endif
