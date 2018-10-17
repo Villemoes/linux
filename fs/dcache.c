@@ -100,7 +100,7 @@ static struct hlist_bl_head *dentry_hashtable __read_mostly;
 
 static inline struct hlist_bl_head *d_hash(unsigned int hash)
 {
-	return dentry_hashtable + (hash >> d_hash_shift);
+	return rai_bucket_shift(dentry_hashtable, d_hash_shift, hash);
 }
 
 #define IN_LOOKUP_SHIFT 10
