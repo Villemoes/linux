@@ -3,8 +3,9 @@
 
 #define RAI_LOAD_4 0
 #define RAI_LOAD_8 1
+#define RAI_BUCKET_SHIFT_8_4_4 2
 
-#define STRUCT_RAI_ENTRY_SIZE 32
+#define STRUCT_RAI_ENTRY_SIZE 40
 
 /* Put the asm macros in a separate file for easier editing. */
 #include <asm/rai.S>
@@ -23,6 +24,10 @@ struct rai_entry {
 		struct {
 			void *addr;
 		} load;
+		struct {
+			void *base_addr;
+			void *shift_addr;
+		} bucket_shift;
 	};
 };
 _Static_assert(sizeof(struct rai_entry) == STRUCT_RAI_ENTRY_SIZE,
@@ -45,6 +50,20 @@ _Static_assert(sizeof(struct rai_entry) == STRUCT_RAI_ENTRY_SIZE,
 			ret__ = _rai_load_fallback(var);		\
 			break;						\
 		}							\
+		ret__;							\
+	})
+
+#define _rai_bucket_shift(base, shift, hash) ({				\
+		typeof(base) ret__;					\
+		typeof(hash) unused__;					\
+		if (sizeof(*(base)) == 8 && sizeof(shift) == 4		\
+		    && sizeof(hash) == 4)				\
+			asm("rai_bucket_shift %0 %1 %q1 %c3 %c4"	\
+			    : "=r" (ret__), "=r" (unused__)		\
+			    : "1" (hash), "i" (&(base)), "i" (&(shift))	\
+			    : "cc");					\
+		else							\
+			ret__ = _rai_bucket_shift_fallback(base, shift, hash); \
 		ret__;							\
 	})
 

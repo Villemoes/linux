@@ -32,6 +32,19 @@ rai_patch_one(const struct rai_entry *r)
 		memcpy(templ + r->templ_len - sizeof(*imm), imm, sizeof(*imm));
 		break;
 	}
+	case RAI_BUCKET_SHIFT_8_4_4: {
+		const u32 *shiftp = r->bucket_shift.shift_addr;
+		const u64 *basep = r->bucket_shift.base_addr;
+		/*
+		 * This should be made more robust. For now, assume we
+		 * have a 10-byte movabs followed by a 3-byte shr. And
+		 * while *shiftp is 4 bytes wide, we just need the
+		 * LSB.
+		 */
+		memcpy(templ + 2, basep, sizeof(*basep));
+		memcpy(templ + 12, shiftp, 1);
+		break;
+	}
 	default:
 		WARN_ONCE(1, "unhandled RAI type %d\n", r->type);
 		return;
