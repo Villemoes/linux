@@ -63,11 +63,21 @@ update_rai_access(void)
 static int one, two;
 static long three;
 
+static struct hlist_head *ht1;
+static unsigned shift1;
+
 static int
 rai_proc_show(struct seq_file *m, void *v) {
+	unsigned hash = 0xdeadbeef;
+
 	seq_printf(m, "one: %d, two: %d, three: %ld\n",
 		   rai_load(one), rai_load(two), rai_load(three));
+	seq_printf(m, "ht1: %016lx, bucket 0x%08x: %016lx\n",
+		   (long)rai_load(ht1), hash, (long)rai_bucket_shift(ht1, shift1, hash));
+
 	one = two = three = -1;
+	ht1 = NULL;
+	shift1 = 2;
 
 	return 0;
 }
@@ -89,6 +99,8 @@ static int __init rai_proc_init(void) {
 	one = 1;
 	two = 2;
 	three = 3;
+	ht1 = (void*)0xffffffffabcd0000UL;
+	shift1 = 26;
 
 	proc_create("rai", 0, NULL, &rai_proc_fops);
 	return 0;
