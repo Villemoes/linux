@@ -71,9 +71,7 @@
  * Additional babbling in: Documentation/static-keys.txt
  */
 
-#if defined(CC_HAVE_ASM_GOTO) && defined(CONFIG_JUMP_LABEL)
-# define HAVE_JUMP_LABEL
-#endif
+#include <asm-generic/jump_label.h>
 
 #ifndef __ASSEMBLY__
 
@@ -193,11 +191,6 @@ enum jump_label_type {
 struct module;
 
 #ifdef HAVE_JUMP_LABEL
-
-#define JUMP_TYPE_FALSE		0UL
-#define JUMP_TYPE_TRUE		1UL
-#define JUMP_TYPE_LINKED	2UL
-#define JUMP_TYPE_MASK		3UL
 
 static __always_inline bool static_key_false(struct static_key *key)
 {
