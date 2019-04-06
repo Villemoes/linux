@@ -171,11 +171,14 @@ config DYNAMIC_DEBUG_RELATIVE_POINTERS
 	bool "Reduce size of dynamic debug metadata"
 	depends on DYNAMIC_DEBUG
 	depends on HAVE_DYNAMIC_DEBUG_RELATIVE_POINTERS
+	depends on (GCC_VERSION >= 50000 || CLANG_VERSION >= 90000)
 	help
 	  If you say Y here, the static memory footprint of the kernel
 	  image will be reduced somewhat (about 40K for a typical
 	  distro kernel). There is no performance difference either
-	  way.
+	  way. This relies on some compile-time magic, so if your
+	  toolchain fails to build the kernel with this option, just
+	  say N.
 
 endmenu # "printk and dmesg options"
 
