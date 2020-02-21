@@ -132,37 +132,17 @@ int kstrtoll(const char *s, unsigned int base, long long *res)
 }
 EXPORT_SYMBOL(kstrtoll);
 
-/* Internal, do not use. */
-int _kstrtoul(const char *s, unsigned int base, unsigned long *res)
+int kstrtoul(const char *s, unsigned int base, unsigned long *res)
 {
-	unsigned long long tmp;
-	int rv;
-
-	rv = kstrtoull(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (unsigned long)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
-EXPORT_SYMBOL(_kstrtoul);
+EXPORT_SYMBOL(kstrtoul);
 
-/* Internal, do not use. */
-int _kstrtol(const char *s, unsigned int base, long *res)
+int kstrtol(const char *s, unsigned int base, long *res)
 {
-	long long tmp;
-	int rv;
-
-	rv = kstrtoll(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (long)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
-EXPORT_SYMBOL(_kstrtol);
+EXPORT_SYMBOL(kstrtol);
 
 /**
  * kstrtouint - convert a string to an unsigned int
