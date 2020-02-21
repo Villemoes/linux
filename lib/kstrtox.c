@@ -16,6 +16,7 @@
 #include <linux/errno.h>
 #include <linux/kernel.h>
 #include <linux/math64.h>
+#include <linux/parse_integer.h>
 #include <linux/export.h>
 #include <linux/types.h>
 #include <linux/uaccess.h>
@@ -82,25 +83,10 @@ unsigned int _parse_integer(const char *s, unsigned int base, unsigned long long
 	return rv;
 }
 
-static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
-{
-	unsigned long long _res;
-	unsigned int rv;
+/* The kstrtox family can be implemented using this combination. */
+#define PARSE_INTEGER_KSTRTOX \
+       (PARSE_INTEGER_NEWLINE | PARSE_INTEGER_ZERO_ON_OK | PARSE_INTEGER_ALL)
 
-	s = _parse_integer_fixup_radix(s, &base);
-	rv = _parse_integer(s, base, &_res);
-	if (rv & KSTRTOX_OVERFLOW)
-		return -ERANGE;
-	if (rv == 0)
-		return -EINVAL;
-	s += rv;
-	if (*s == '\n')
-		s++;
-	if (*s)
-		return -EINVAL;
-	*res = _res;
-	return 0;
-}
 
 /**
  * kstrtoull - convert a string to an unsigned long long
@@ -120,9 +106,7 @@ static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
  */
 int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
 {
-	if (s[0] == '+')
-		s++;
-	return _kstrtoull(s, base, res);
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtoull);
 
@@ -144,25 +128,7 @@ EXPORT_SYMBOL(kstrtoull);
  */
 int kstrtoll(const char *s, unsigned int base, long long *res)
 {
-	unsigned long long tmp;
-	int rv;
-
-	if (s[0] == '-') {
-		rv = _kstrtoull(s + 1, base, &tmp);
-		if (rv < 0)
-			return rv;
-		if ((long long)-tmp > 0)
-			return -ERANGE;
-		*res = -tmp;
-	} else {
-		rv = kstrtoull(s, base, &tmp);
-		if (rv < 0)
-			return rv;
-		if ((long long)tmp < 0)
-			return -ERANGE;
-		*res = tmp;
-	}
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtoll);
 
@@ -216,16 +182,7 @@ EXPORT_SYMBOL(_kstrtol);
  */
 int kstrtouint(const char *s, unsigned int base, unsigned int *res)
 {
-	unsigned long long tmp;
-	int rv;
-
-	rv = kstrtoull(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (unsigned int)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtouint);
 
@@ -247,76 +204,31 @@ EXPORT_SYMBOL(kstrtouint);
  */
 int kstrtoint(const char *s, unsigned int base, int *res)
 {
-	long long tmp;
-	int rv;
-
-	rv = kstrtoll(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (int)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtoint);
 
 int kstrtou16(const char *s, unsigned int base, u16 *res)
 {
-	unsigned long long tmp;
-	int rv;
-
-	rv = kstrtoull(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (u16)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtou16);
 
 int kstrtos16(const char *s, unsigned int base, s16 *res)
 {
-	long long tmp;
-	int rv;
-
-	rv = kstrtoll(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (s16)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtos16);
 
 int kstrtou8(const char *s, unsigned int base, u8 *res)
 {
-	unsigned long long tmp;
-	int rv;
-
-	rv = kstrtoull(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (u8)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtou8);
 
 int kstrtos8(const char *s, unsigned int base, s8 *res)
 {
-	long long tmp;
-	int rv;
-
-	rv = kstrtoll(s, base, &tmp);
-	if (rv < 0)
-		return rv;
-	if (tmp != (s8)tmp)
-		return -ERANGE;
-	*res = tmp;
-	return 0;
+	return parse_integer(s, base, res, PARSE_INTEGER_KSTRTOX);
 }
 EXPORT_SYMBOL(kstrtos8);
 

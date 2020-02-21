@@ -148,6 +148,11 @@ static void __init test_kstrtoull_ok(void)
 		{"0xffffffffffffffff",	16,	0xffffffffffffffffULL},
 
 		{"0\n",	0,	0ULL},
+		/* minus 0 is 0, which is representable in unsigned long long */
+		{"-0", 0, 0ULL},
+		{"-0", 8, 0ULL},
+		{"-0", 10, 0ULL},
+		{"-0", 16, 0ULL},
 	};
 	TEST_OK(kstrtoull, unsigned long long, "%llu", test_ull_ok);
 }
@@ -200,10 +205,6 @@ static void __init test_kstrtoull_fail(void)
 		{"18446744073709551616",	10},
 		{"10000000000000000",	16},
 		/* negative */
-		{"-0", 0},
-		{"-0", 8},
-		{"-0", 10},
-		{"-0", 16},
 		{"-1", 0},
 		{"-1", 8},
 		{"-1", 10},
